@@ -1,5 +1,4 @@
-export enum ValidRoles {
+export enugitValidRoles {
     admin = "admin",
-    teacher = "teacher",
-    superUser = "super-user"
+    student = "student"
 }
