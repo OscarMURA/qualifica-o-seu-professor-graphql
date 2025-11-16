@@ -6,23 +6,122 @@ type User {
   id: ID!
   email: String!
   fullName: String!
-  password: String!
   isActive: Boolean!
   roles: [String!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type AuthReponse {
   user: User!
   token: String!
 }
 
+type Comment {
+  id: ID!
+  content: String!
+  rating: Int!
+  professor: Professor!
+  student: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Professor {
+  id: ID!
+  name: String!
+  department: String!
+  university: University!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type University {
+  id: ID!
+  name: String!
+  location: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PaginatedComments {
+  data: [Comment!]!
+  page: Int!
+  limit: Int!
+  total: Int!
+}
+
+type ProfessorRating {
+  averageRating: Float!
+  totalComments: Int!
+}
+
+type SeedAdmin {
+  id: String!
+  email: String!
+}
+
+type SeedResponse {
+  message: String!
+  admin: SeedAdmin
+  universities: Int!
+  professors: Int!
+  students: Int!
+  comments: Int!
+}
+
+type UnseedResponse {
+  message: String!
+}
+
 type Query {
-  user(id: Int!): User!
+  me: User!
+  users: [User!]!
+  user(id: ID!): User!
+  universities: [University!]!
+  university(id: ID!): University!
+  professors(filterInput: FilterProfessorInput): [Professor!]!
+  professor(id: ID!): Professor!
+  comments(filterInput: FilterCommentInput): PaginatedComments!
+  comment(id: ID!): Comment!
+  professorRating(professorId: ID!): ProfessorRating!
+}
+
+input FilterProfessorInput {
+  universityId: String
+  search: String
+}
+
+input FilterCommentInput {
+  professorId: String
+  userId: String
+  search: String
+  page: Int = 1
+  limit: Int = 20
 }
 
 type Mutation {
   signup(signupInput: SignupInput!): AuthReponse!
   login(loginInput: LoginInput!): AuthReponse!
+  createUser(createUserInput: CreateUserInput!): User!
+  updateUser(id: ID!, updateUserInput: UpdateUserInput!): User!
+  removeUser(id: ID!): User!
+  createUniversity(createUniversityInput: CreateUniversityInput!): University!
+  updateUniversity(id: ID!, updateUniversityInput: UpdateUniversityInput!): University!
+  removeUniversity(id: ID!): University!
+  createProfessor(createProfessorInput: CreateProfessorInput!): Professor!
+  updateProfessor(id: ID!, updateProfessorInput: UpdateProfessorInput!): Professor!
+  removeProfessor(id: ID!): Professor!
+  createComment(createCommentInput: CreateCommentInput!): Comment!
+  updateComment(id: ID!, updateCommentInput: UpdateCommentInput!): Comment!
+  removeComment(id: ID!): Comment!
+  executeSeed: SeedResponse!
+  executeUnseed: UnseedResponse!
 }
 
 input SignupInput {
@@ -34,4 +133,52 @@ input SignupInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  fullName: String!
+  roles: [String!]
+}
+
+input UpdateUserInput {
+  email: String
+  password: String
+  fullName: String
+  roles: [String!]
+}
+
+input CreateUniversityInput {
+  name: String!
+  location: String!
+}
+
+input UpdateUniversityInput {
+  name: String
+  location: String
+}
+
+input CreateProfessorInput {
+  name: String!
+  department: String!
+  universityId: ID!
+}
+
+input UpdateProfessorInput {
+  name: String
+  department: String
+  universityId: ID
+}
+
+input CreateCommentInput {
+  content: String!
+  rating: Int!
+  professorId: ID!
+}
+
+input UpdateCommentInput {
+  content: String
+  rating: Int
+  professorId: ID
 }
