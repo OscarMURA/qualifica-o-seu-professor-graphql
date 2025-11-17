@@ -91,7 +91,19 @@
       "<rootDir>/test/setup.ts"
     ],
     "collectCoverageFrom": [
-      "src/auth/**/*.(t|j)s"
+      "src/auth/**/*.(t|j)s",
+      "!src/auth/entities/auth.entity.ts",
+      "src/comments/comments.service.ts",
+      "src/comments/comments.resolver.ts",
+      "src/professors/professors.service.ts",
+      "src/professors/professors.resolver.ts",
+      "src/universities/universities.service.ts",
+      "src/universities/universities.resolver.ts",
+      "src/users/users.service.ts",
+      "src/users/users.resolver.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/auth/entities/auth.entity.ts"
     ],
     "coverageDirectory": "coverage",
     "coverageThreshold": {
