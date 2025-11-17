@@ -100,7 +100,10 @@
       "src/universities/universities.service.ts",
       "src/universities/universities.resolver.ts",
       "src/users/users.service.ts",
-      "src/users/users.resolver.ts"
+      "src/users/users.resolver.ts",
+      "src/seed/seed.service.ts",
+      "src/seed/seed.resolver.ts",
+      "!src/auth/**"
     ],
     "coveragePathIgnorePatterns": [
       "<rootDir>/src/auth/entities/auth.entity.ts"
