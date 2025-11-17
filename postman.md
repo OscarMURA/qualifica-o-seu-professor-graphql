@@ -1,5 +1,5 @@
 
-## 📦 Configuración de Postman para GraphQL
+## Configuración de Postman para GraphQL
 
 ### Variables de entorno en Postman:
 ```
@@ -30,7 +30,7 @@ if (pm.collectionVariables.get("token")) {
 
 ---
 
-## 🔐 1. AUTENTICACIÓN
+## 1. AUTENTICACIÓN
 
 ### 1.1 Signup (Registrar nuevo estudiante)
 **POST** `{{graphDomain}}/graphql`
@@ -110,10 +110,10 @@ if (jsonData.data && jsonData.data.login && jsonData.data.login.token) {
     pm.collectionVariables.set("userEmail", jsonData.data.login.user.email);
     
     // Log success message
-    console.log("✅ Token saved successfully!");
+    console.log(" Token saved successfully!");
     console.log("Token:", jsonData.data.login.token);
 } else {
-    console.log("❌ No token found in response");
+    console.log(" No token found in response");
 }
 ```
 
@@ -204,13 +204,13 @@ if (jsonData.data && jsonData.data.createUser) {
     pm.collectionVariables.set("lastCreatedUserName", createdUser.fullName);
     
     // Log success message
-    console.log("✅ User created successfully!");
+    console.log(" User created successfully!");
     console.log("User ID:", createdUser.id);
     console.log("Email:", createdUser.email);
     console.log("Full Name:", createdUser.fullName);
     console.log("Roles:", createdUser.roles);
 } else {
-    console.log("❌ No user data found in response");
+    console.log(" No user data found in response");
 }
 ```
 
@@ -327,7 +327,7 @@ mutation RemoveUser($id: ID!) {
 
 ---
 
-## 🏫 3. UNIVERSIDADES
+##  3. UNIVERSIDADES
 
 ### 3.1 Listar Universidades (Público)
 **POST** `{{graphDomain}}/graphql`
@@ -376,7 +376,7 @@ query University($id: ID!) {
 
 ---
 
-### 📝 3.3. Create University (Admin)
+###  3.3. Create University (Admin)
 **POST** `{{graphDomain}}/graphql`
 **Requiere**: Admin Token
 
@@ -409,11 +409,11 @@ if (response.data && response.data.createUniversity) {
     const createdUniversity = response.data.createUniversity;
     pm.collectionVariables.set("lastCreatedUniversityId", createdUniversity.id);
     pm.collectionVariables.set("lastCreatedUniversityName", createdUniversity.name);
-    console.log("✅ Universidad creada y guardada:");
+    console.log(" Universidad creada y guardada:");
     console.log("   - ID:", createdUniversity.id);
     console.log("   - Nombre:", createdUniversity.name);
 } else {
-    console.log("❌ Error al crear universidad");
+    console.log(" Error al crear universidad");
 }
 ```
 
@@ -475,7 +475,7 @@ mutation RemoveUniversity($id: ID!) {
 
 ---
 
-## 👨‍🏫 4. PROFESORES
+##  4. PROFESORES
 
 ### 4.1 Listar Profesores (Público)
 **POST** `{{graphDomain}}/graphql`
@@ -626,12 +626,12 @@ if (response.data && response.data.createProfessor) {
     pm.collectionVariables.set("lastCreatedProfessorId", createdProfessor.id);
     pm.collectionVariables.set("lastCreatedProfessorName", createdProfessor.name);
     pm.collectionVariables.set("lastCreatedProfessorDepartment", createdProfessor.department);
-    console.log("✅ Profesor creado y guardado:");
+    console.log(" Profesor creado y guardado:");
     console.log("   - ID:", createdProfessor.id);
     console.log("   - Nombre:", createdProfessor.name);
     console.log("   - Departamento:", createdProfessor.department);
 } else {
-    console.log("❌ Error al crear profesor");
+    console.log(" Error al crear profesor");
 }
 ```
 
@@ -695,7 +695,7 @@ mutation RemoveProfessor($id: ID!) {
 
 ---
 
-## 💬 5. COMENTARIOS
+##  5. COMENTARIOS
 
 ### 5.1 Listar Comentarios (Público)
 **POST** `{{graphDomain}}/graphql`
@@ -880,12 +880,12 @@ if (response.data && response.data.createComment) {
     const createdComment = response.data.createComment;
     pm.collectionVariables.set("lastCreatedCommentId", createdComment.id);
     pm.collectionVariables.set("lastCreatedCommentRating", createdComment.rating);
-    console.log("✅ Comentario creado y guardado:");
+    console.log(" Comentario creado y guardado:");
     console.log("   - ID:", createdComment.id);
     console.log("   - Rating:", createdComment.rating);
     console.log("   - Contenido:", createdComment.content.substring(0, 50) + "...");
 } else {
-    console.log("❌ Error al crear comentario");
+    console.log(" Error al crear comentario");
 }
 ```
 
@@ -971,7 +971,7 @@ query ProfessorRating($professorId: ID!) {
 
 ---
 
-## 🌱 6. SEED (Datos de Prueba)
+## 6. SEED (Datos de Prueba)
 
 ### 6.1 Ejecutar Seed (Público)
 **POST** `{{graphDomain}}/graphql`
@@ -1013,7 +1013,7 @@ mutation ExecuteUnseed {
 
 ---
 
-## 📝 Flujo de Prueba Recomendado:
+## Flujo de Prueba Recomendado:
 
 1. **Ejecutar Seed** para poblar la BD con datos de prueba
 2. **Login como Admin** (`admin@example.com` / `password123`)
@@ -1026,41 +1026,41 @@ mutation ExecuteUnseed {
 
 ---
 
-## 📋 Variables de Colección Disponibles
+## Variables de Colección Disponibles
 
 Estas variables se guardan automáticamente cuando creas entidades usando los scripts de Tests:
 
-### 🔐 Autenticación
+### Autenticación
 - `{{authToken}}` - Token JWT del usuario autenticado (se guarda al hacer Login)
 - `{{currentUserEmail}}` - Email del usuario actual
 - `{{currentUserName}}` - Nombre completo del usuario actual
 
-### 👤 Usuarios
+### Usuarios
 - `{{lastCreatedUserId}}` - ID del último usuario creado
 - `{{lastCreatedUserEmail}}` - Email del último usuario creado
 - `{{lastCreatedUserName}}` - Nombre del último usuario creado
 
-### 🏫 Universidades
+### Universidades
 - `{{lastCreatedUniversityId}}` - ID de la última universidad creada
 - `{{lastCreatedUniversityName}}` - Nombre de la última universidad creada
 
-### 👨‍🏫 Profesores
+###  Profesores
 - `{{lastCreatedProfessorId}}` - ID del último profesor creado
 - `{{lastCreatedProfessorName}}` - Nombre del último profesor creado
 - `{{lastCreatedProfessorDepartment}}` - Departamento del último profesor creado
 
-### 💬 Comentarios
+###  Comentarios
 - `{{lastCreatedCommentId}}` - ID del último comentario creado
 - `{{lastCreatedCommentRating}}` - Rating del último comentario creado
 
-### 🌐 Configuración
+###  Configuración
 - `{{graphDomain}}` - URL base del servidor GraphQL (ej: `http://localhost:9090`)
 
 **Nota**: Para usar estas variables en tus requests, simplemente escríbelas entre dobles llaves `{{nombreVariable}}` en cualquier parte de la petición (URL, Headers, GraphQL Variables, etc.)
 
 ---
 
-## 💡 Consejos de Uso
+##Consejos de Uso
 
 1. **Autorización Automática**: El script de colección agrega automáticamente el header `Authorization: Bearer {{authToken}}` si la variable está definida
 

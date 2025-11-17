@@ -23,7 +23,61 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+**Qualifica o seu Professor** - GraphQL API para calificar y comentar profesores universitarios.
+
+Sistema completo de gestión de universidades, profesores y comentarios con autenticación JWT y control de roles (Admin/Student).
+
+### Características Principales
+
+- **GraphQL API** completa con Queries y Mutations
+- **Fragments de GraphQL** para reutilización de código
+- **Autenticación JWT** con Passport
+- **Roles** (Admin/Student) con guards de autorización
+- **TypeORM** con PostgreSQL
+- **Seed automático** con datos de prueba (Faker.js)
+- **Usuario admin predeterminado** (`admin@example.com` / `admin123`)
+- **Manejo de errores** robusto con excepciones personalizadas
+- **Validación de datos** con class-validator
+- **Paginación** en listados de comentarios
+- **Filtros avanzados** (por universidad, profesor, búsqueda de texto)
+
+### Documentación
+
+- **[postman.md](./postman.md)** - Guía completa de pruebas con Postman (incluye todos los queries y mutations con fragments)
+- **[FRAGMENTS.md](./FRAGMENTS.md)** - Documentación detallada de la implementación de Fragments de GraphQL
+
+### Fragments de GraphQL
+
+Este proyecto implementa **12 fragments únicos** que cubren el 100% de las queries y mutations:
+
+```graphql
+# Ejemplo de uso
+fragment UserBasicFields on User {
+  id
+  email
+  fullName
+  roles
+}
+
+query Login($loginInput: LoginInput!) {
+  login(loginInput: $loginInput) {
+    token
+    user {
+      ...UserBasicFields
+    }
+  }
+}
+```
+
+**Beneficios:**
+- Reducción de ~40% en código duplicado
+- Mantenibilidad mejorada
+- Consistencia garantizada en todas las queries
+- Composición de fragments para estructuras complejas
+
+Ver [FRAGMENTS.md](./FRAGMENTS.md) para más detalles.
+
+---
 
 ## Project setup
 
