@@ -64,10 +64,16 @@
 									"        pm.environment.set(\"seedUniversityId\", jsonData.data.universities[0].id);",
 									"    }",
 									"    ",
-									"    // Guardar ID del primer profesor",
+									"    // Guardar ID del primer, segundo y tercer profesor",
 									"    if (jsonData.data.professors && jsonData.data.professors.length > 0) {",
 									"        pm.environment.set(\"seedProfessorId\", jsonData.data.professors[0].id);",
 									"        pm.environment.set(\"professorId\", jsonData.data.professors[0].id);",
+									"    }",
+									"    if (jsonData.data.professors && jsonData.data.professors.length > 1) {",
+									"        pm.environment.set(\"seedProfessorId2\", jsonData.data.professors[1].id);",
+									"    }",
+									"    if (jsonData.data.professors && jsonData.data.professors.length > 2) {",
+									"        pm.environment.set(\"seedProfessorId3\", jsonData.data.professors[2].id);",
 									"    }",
 									"    ",
 									"    pm.expect(jsonData.data.universities).to.be.an('array');",
@@ -782,6 +788,7 @@
 									"pm.test(\"University updated\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.data.updateUniversity).to.exist;",
+									"    pm.expect(jsonData.data.updateUniversity.name).to.equal(\"Universidad del Valle - Campus Meléndez\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -805,7 +812,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "mutation UpdateUniversity($id: ID!, $updateUniversityInput: UpdateUniversityInput!) {\n  updateUniversity(id: $id, updateUniversityInput: $updateUniversityInput) {\n    id\n    name\n    location\n  }\n}",
-								"variables": "{\n  \"id\": \"{{universityId}}\",\n  \"updateUniversityInput\": {\n    \"name\": \"Universidad del Valle - Campus Meléndez\"\n  }\n}"
+								"variables": "{\n  \"id\": \"{{universityId}}\",\n  \"updateUniversityInput\": {\n    \"name\": \"Universidad del Valle - Campus Meléndez\",\n    \"location\": \"Cali, Valle del Cauca, Colombia\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -1391,7 +1398,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "mutation CreateComment($createCommentInput: CreateCommentInput!) {\n  createComment(createCommentInput: $createCommentInput) {\n    id\n    content\n    rating\n  }\n}",
-								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"No es muy claro con las explicaciones.\",\n    \"rating\": 2,\n    \"professorId\": \"{{seedProfessorId}}\"\n  }\n}"
+								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"No es muy claro con las explicaciones.\",\n    \"rating\": 2,\n    \"professorId\": \"{{seedProfessorId2}}\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -1633,7 +1640,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "mutation RemoveComment($id: ID!) {\n  removeComment(id: $id) {\n    id\n  }\n}",
-								"variables": "{\n  \"id\": \"invalid-comment-id\"\n}"
+								"variables": "{\n  \"id\": \"00000000-0000-0000-0000-000000000000\"\n}"
 							}
 						},
 						"url": {
@@ -1811,7 +1818,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "fragment CommentFields on Comment {\n  id\n  content\n  rating\n  createdAt\n  updatedAt\n}\n\nfragment CommentWithRelations on Comment {\n  ...CommentFields\n  professor {\n    id\n    name\n  }\n  student {\n    id\n    fullName\n  }\n}\n\nmutation CreateComment($createCommentInput: CreateCommentInput!) {\n  createComment(createCommentInput: $createCommentInput) {\n    ...CommentWithRelations\n  }\n}",
-								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"Buen profesor con fragment example\",\n    \"rating\": 4,\n    \"professorId\": \"{{seedProfessorId}}\"\n  }\n}"
+								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"Buen profesor con fragment example\",\n    \"rating\": 4,\n    \"professorId\": \"{{seedProfessorId3}}\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -1895,6 +1902,16 @@
 		},
 		{
 			"key": "seedProfessorId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seedProfessorId2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seedProfessorId3",
 			"value": "",
 			"type": "string"
 		}
