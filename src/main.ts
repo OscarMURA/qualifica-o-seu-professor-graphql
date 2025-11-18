@@ -14,6 +14,8 @@ async function bootstrap() {
   )
 
   app.enableCors();
-  await app.listen(9090);
+  const port = process.env.PORT || 9090;
+  await app.listen(port);
+  console.log(`🚀 Application is running on: http://localhost:${port}/api`);
 }
 bootstrap();
