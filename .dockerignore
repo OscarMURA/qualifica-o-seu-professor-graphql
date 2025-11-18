@@ -1,0 +1,3 @@
+# PostgreSQL Docker
+postgres_data/
+.env.local

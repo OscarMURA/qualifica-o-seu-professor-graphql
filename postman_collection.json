@@ -1,0 +1,1919 @@
+{
+	"info": {
+		"_postman_id": "qualifica-professor-api-2025",
+		"name": "Qualifica-o-seu-Professor GraphQL API",
+		"description": "Colección completa de pruebas para el API GraphQL de calificación de profesores.\n\n## Variables de Entorno\n- `baseUrl`: URL del API (http://localhost:9090/api/graphql)\n- `token`: Token JWT (se actualiza automáticamente tras login)\n- `userId`: ID del usuario autenticado\n- `professorId`: ID de un profesor de prueba\n- `universityId`: ID de una universidad de prueba\n- `commentId`: ID de un comentario de prueba\n\n## Flujos de Prueba\n1. Autenticación (Signup & Login)\n2. Gestión de Usuarios (Admin)\n3. Gestión de Universidades (Admin)\n4. Gestión de Profesores (Admin + Public)\n5. Gestión de Comentarios (Student + Admin)\n6. Consultas Públicas\n7. Tests de Autorización",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. Setup - Seed Data",
+			"item": [
+				{
+					"name": "Ejecutar Seed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Seed executed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.executeSeed).to.exist;",
+									"    // Guardar info del admin para usar en tests",
+									"    if (jsonData.data.executeSeed.admin) {",
+									"        pm.environment.set(\"adminId\", jsonData.data.executeSeed.admin.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation ExecuteSeed {\n  executeSeed {\n    message\n    admin {\n      id\n      email\n    }\n    universities\n    professors\n    students\n    comments\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Poblar la base de datos con datos de prueba"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener IDs de Entidades del Seed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Setup IDs from seed data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    // Guardar ID de la primera universidad",
+									"    if (jsonData.data.universities && jsonData.data.universities.length > 0) {",
+									"        pm.environment.set(\"seedUniversityId\", jsonData.data.universities[0].id);",
+									"    }",
+									"    ",
+									"    // Guardar ID del primer, segundo y tercer profesor",
+									"    if (jsonData.data.professors && jsonData.data.professors.length > 0) {",
+									"        pm.environment.set(\"seedProfessorId\", jsonData.data.professors[0].id);",
+									"        pm.environment.set(\"professorId\", jsonData.data.professors[0].id);",
+									"    }",
+									"    if (jsonData.data.professors && jsonData.data.professors.length > 1) {",
+									"        pm.environment.set(\"seedProfessorId2\", jsonData.data.professors[1].id);",
+									"    }",
+									"    if (jsonData.data.professors && jsonData.data.professors.length > 2) {",
+									"        pm.environment.set(\"seedProfessorId3\", jsonData.data.professors[2].id);",
+									"    }",
+									"    ",
+									"    pm.expect(jsonData.data.universities).to.be.an('array');",
+									"    pm.expect(jsonData.data.professors).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query GetSeedData {\n  universities {\n    id\n    name\n  }\n  professors {\n    id\n    name\n    university {\n      id\n    }\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Obtener IDs de entidades creadas por el seed para usar en los tests"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1. Autenticación",
+			"item": [
+				{
+					"name": "Signup - Crear Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has data.signup\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.signup).to.exist;",
+									"});",
+									"",
+									"pm.test(\"Token is returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.signup.token).to.be.a('string');",
+									"    pm.environment.set(\"studentToken\", jsonData.data.signup.token);",
+									"});",
+									"",
+									"pm.test(\"User data is returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var user = jsonData.data.signup.user;",
+									"    pm.expect(user.id).to.exist;",
+									"    pm.expect(user.email).to.exist;",
+									"    pm.expect(user.fullName).to.exist;",
+									"    pm.expect(user.roles).to.include('student');",
+									"    pm.environment.set(\"studentId\", user.id);",
+									"    pm.environment.set(\"studentEmail\", user.email);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Signup($signupInput: SignupInput!) {\n  signup(signupInput: $signupInput) {\n    token\n    user {\n      id\n      email\n      fullName\n      roles\n      isActive\n      createdAt\n    }\n  }\n}",
+								"variables": "{\n  \"signupInput\": {\n    \"email\": \"student{{$timestamp}}@test.com\",\n    \"password\": \"Password123!\",\n    \"fullName\": \"Test Student\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Registrar un nuevo usuario con rol student (por defecto)"
+					},
+					"response": []
+				},
+				{
+					"name": "Signup - Crear Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"Admin signup successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.signup) {",
+									"        pm.environment.set(\"adminToken\", jsonData.data.signup.token);",
+									"        pm.environment.set(\"adminId\", jsonData.data.signup.user.id);",
+									"        pm.environment.set(\"token\", jsonData.data.signup.token);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Signup($signupInput: SignupInput!) {\n  signup(signupInput: $signupInput) {\n    token\n    user {\n      id\n      email\n      fullName\n      roles\n      isActive\n    }\n  }\n}",
+								"variables": "{\n  \"signupInput\": {\n    \"email\": \"admin{{$timestamp}}@test.com\",\n    \"password\": \"AdminPass123!\",\n    \"fullName\": \"Test Admin\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Nota: Después de crear este usuario, debe ser promovido a admin manualmente en la base de datos o mediante seed"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Student",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Login successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.login.token).to.exist;",
+									"    pm.environment.set(\"studentToken\", jsonData.data.login.token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Login($loginInput: LoginInput!) {\n  login(loginInput: $loginInput) {\n    token\n    user {\n      id\n      email\n      fullName\n      roles\n      isActive\n    }\n  }\n}",
+								"variables": "{\n  \"loginInput\": {\n    \"email\": \"{{studentEmail}}\",\n    \"password\": \"Password123!\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"Admin login successful\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.login) {",
+									"        pm.environment.set(\"adminToken\", jsonData.data.login.token);",
+									"        pm.environment.set(\"token\", jsonData.data.login.token);",
+									"    }",
+									"    pm.expect(jsonData.data.login.token).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Login($loginInput: LoginInput!) {\n  login(loginInput: $loginInput) {\n    token\n    user {\n      id\n      email\n      fullName\n      roles\n    }\n  }\n}",
+								"variables": "{\n  \"loginInput\": {\n    \"email\": \"admin@example.com\",\n    \"password\": \"admin123\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Login como administrador. Asegúrate de tener un usuario admin en la BD."
+					},
+					"response": []
+				},
+				{
+					"name": "Me - Usuario Autenticado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"User info retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.me.id).to.exist;",
+									"    pm.environment.set(\"userId\", jsonData.data.me.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Me {\n  me {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Obtener información del usuario autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Credenciales Inválidas",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Login($loginInput: LoginInput!) {\n  login(loginInput: $loginInput) {\n    token\n    user {\n      id\n    }\n  }\n}",
+								"variables": "{\n  \"loginInput\": {\n    \"email\": \"noexiste@test.com\",\n    \"password\": \"wrongpassword\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Probar manejo de errores con credenciales incorrectas"
+					},
+					"response": []
+				}
+			],
+			"description": "Flujo completo de autenticación: registro, login, obtención de perfil"
+		},
+		{
+			"name": "2. Gestión de Usuarios (Admin)",
+			"item": [
+				{
+					"name": "Listar Todos los Usuarios",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"Users list retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.users).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Users {\n  users {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Solo admin puede listar todos los usuarios"
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Usuario (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"User created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.createUser) {",
+									"        pm.environment.set(\"newUserId\", jsonData.data.createUser.id);",
+									"    }",
+									"    pm.expect(jsonData.data.createUser.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateUser($createUserInput: CreateUserInput!) {\n  createUser(createUserInput: $createUserInput) {\n    id\n    email\n    fullName\n    roles\n    isActive\n  }\n}",
+								"variables": "{\n  \"createUserInput\": {\n    \"email\": \"newuser{{$timestamp}}@test.com\",\n    \"password\": \"NewUser123!\",\n    \"fullName\": \"New Test User\",\n    \"roles\": [\"student\"]\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Usuario por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"User found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.user).to.exist;",
+									"    pm.expect(jsonData.data.user.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query User($id: ID!) {\n  user(id: $id) {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": "{\n  \"id\": \"{{userId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"User updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.updateUser).to.exist;",
+									"    pm.expect(jsonData.data.updateUser.fullName).to.equal(\"Updated User Name\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateUser($id: ID!, $updateUserInput: UpdateUserInput!) {\n  updateUser(id: $id, updateUserInput: $updateUserInput) {\n    id\n    email\n    fullName\n    roles\n    isActive\n  }\n}",
+								"variables": "{\n  \"id\": \"{{newUserId}}\",\n  \"updateUserInput\": {\n    \"fullName\": \"Updated User Name\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"User removed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.removeUser).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation RemoveUser($id: ID!) {\n  removeUser(id: $id) {\n    id\n    email\n    fullName\n    isActive\n  }\n}",
+								"variables": "{\n  \"id\": \"{{newUserId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Soft delete: marca el usuario como inactivo"
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones CRUD de usuarios (solo admin)"
+		},
+		{
+			"name": "3. Gestión de Universidades",
+			"item": [
+				{
+					"name": "Crear Universidad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"No GraphQL errors\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.be.undefined;",
+									"});",
+									"",
+									"pm.test(\"University created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.data && jsonData.data.createUniversity) {",
+									"        pm.environment.set(\"universityId\", jsonData.data.createUniversity.id);",
+									"    }",
+									"    pm.expect(jsonData.data.createUniversity.id).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateUniversity($createUniversityInput: CreateUniversityInput!) {\n  createUniversity(createUniversityInput: $createUniversityInput) {\n    id\n    name\n    location\n    createdAt\n  }\n}",
+								"variables": "{\n  \"createUniversityInput\": {\n    \"name\": \"Universidad del Valle\",\n    \"location\": \"Cali, Colombia\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Universidades",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Universities list retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.universities).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Universities {\n  universities {\n    id\n    name\n    location\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Consulta pública (no requiere autenticación)"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Universidad por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"University found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.university).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query University($id: ID!) {\n  university(id: $id) {\n    id\n    name\n    location\n    createdAt\n  }\n}",
+								"variables": "{\n  \"id\": \"{{universityId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Universidad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"University updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.updateUniversity).to.exist;",
+									"    pm.expect(jsonData.data.updateUniversity.name).to.equal(\"Universidad del Valle - Campus Meléndez\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateUniversity($id: ID!, $updateUniversityInput: UpdateUniversityInput!) {\n  updateUniversity(id: $id, updateUniversityInput: $updateUniversityInput) {\n    id\n    name\n    location\n  }\n}",
+								"variables": "{\n  \"id\": \"{{universityId}}\",\n  \"updateUniversityInput\": {\n    \"name\": \"Universidad del Valle - Campus Meléndez\",\n    \"location\": \"Cali, Valle del Cauca, Colombia\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Universidad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"University removed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.removeUniversity).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation RemoveUniversity($id: ID!) {\n  removeUniversity(id: $id) {\n    id\n    name\n  }\n}",
+								"variables": "{\n  \"id\": \"{{universityId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Gestión de Profesores",
+			"item": [
+				{
+					"name": "Crear Profesor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Professor created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.createProfessor.id).to.exist;",
+									"    pm.environment.set(\"professorId\", jsonData.data.createProfessor.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateProfessor($createProfessorInput: CreateProfessorInput!) {\n  createProfessor(createProfessorInput: $createProfessorInput) {\n    id\n    name\n    department\n    university {\n      id\n      name\n    }\n    createdAt\n  }\n}",
+								"variables": "{\n  \"createProfessorInput\": {\n    \"name\": \"Dr. Juan Carlos Pérez\",\n    \"department\": \"Ingeniería de Sistemas\",\n    \"universityId\": \"{{seedUniversityId}}\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Profesores (Sin Filtros)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Professors list retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.professors).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Professors {\n  professors {\n    id\n    name\n    department\n    university {\n      id\n      name\n    }\n    createdAt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Consulta pública"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Profesores (Con Filtros)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Filtered professors retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.professors).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Professors($filterInput: FilterProfessorInput) {\n  professors(filterInput: $filterInput) {\n    id\n    name\n    department\n    university {\n      name\n    }\n  }\n}",
+								"variables": "{\n  \"filterInput\": {\n    \"search\": \"a\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Profesor por ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Professor found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.professor).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Professor($id: ID!) {\n  professor(id: $id) {\n    id\n    name\n    department\n    university {\n      id\n      name\n      location\n    }\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": "{\n  \"id\": \"{{professorId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Profesor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Professor updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.updateProfessor).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateProfessor($id: ID!, $updateProfessorInput: UpdateProfessorInput!) {\n  updateProfessor(id: $id, updateProfessorInput: $updateProfessorInput) {\n    id\n    name\n    department\n  }\n}",
+								"variables": "{\n  \"id\": \"{{professorId}}\",\n  \"updateProfessorInput\": {\n    \"name\": \"Dr. Juan Carlos Pérez García\",\n    \"department\": \"Ingeniería de Sistemas y Computación\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Profesor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Professor removed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.removeProfessor).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{adminToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation RemoveProfessor($id: ID!) {\n  removeProfessor(id: $id) {\n    id\n    name\n  }\n}",
+								"variables": "{\n  \"id\": \"{{professorId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Gestión de Comentarios",
+			"item": [
+				{
+					"name": "Crear Comentario (Student)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Comment created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.createComment.id).to.exist;",
+									"    pm.environment.set(\"commentId\", jsonData.data.createComment.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateComment($createCommentInput: CreateCommentInput!) {\n  createComment(createCommentInput: $createCommentInput) {\n    id\n    content\n    rating\n    professor {\n      id\n      name\n    }\n    student {\n      id\n      fullName\n    }\n    createdAt\n  }\n}",
+								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"Excelente profesor, muy claro en sus explicaciones y siempre dispuesto a ayudar.\",\n    \"rating\": 5,\n    \"professorId\": \"{{seedProfessorId}}\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Comentarios (Sin Filtros)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Comments retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.comments).to.exist;",
+									"    pm.expect(jsonData.data.comments.data).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Comments {\n  comments {\n    data {\n      id\n      content\n      rating\n      professor {\n        name\n        university {\n          name\n        }\n      }\n      student {\n        fullName\n      }\n      createdAt\n    }\n    page\n    limit\n    total\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Comentarios (Con Filtros y Paginación)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Filtered comments retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.comments).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Comments($filterInput: FilterCommentInput) {\n  comments(filterInput: $filterInput) {\n    data {\n      id\n      content\n      rating\n      professor {\n        name\n      }\n      student {\n        fullName\n      }\n      createdAt\n    }\n    page\n    limit\n    total\n  }\n}",
+								"variables": "{\n  \"filterInput\": {\n    \"page\": 1,\n    \"limit\": 10\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Rating de Profesor",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Professor rating retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.professorRating).to.exist;",
+									"    pm.expect(jsonData.data.professorRating.averageRating).to.be.a('number');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query ProfessorRating($professorId: ID!) {\n  professorRating(professorId: $professorId) {\n    averageRating\n    totalComments\n  }\n}",
+								"variables": "{\n  \"professorId\": \"{{seedProfessorId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Obtener estadísticas de calificación de un profesor"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Comentario Propio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Comment updated\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.updateComment).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateComment($id: ID!, $updateCommentInput: UpdateCommentInput!) {\n  updateComment(id: $id, updateCommentInput: $updateCommentInput) {\n    id\n    content\n    rating\n    updatedAt\n  }\n}",
+								"variables": "{\n  \"id\": \"{{commentId}}\",\n  \"updateCommentInput\": {\n    \"content\": \"Excelente profesor, muy claro en sus explicaciones. Actualizado después de completar el semestre.\",\n    \"rating\": 5\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Comentario Propio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Comment removed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.removeComment).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation RemoveComment($id: ID!) {\n  removeComment(id: $id) {\n    id\n    content\n  }\n}",
+								"variables": "{\n  \"id\": \"{{commentId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Comentario con Rating Bajo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Low rating comment created\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.createComment).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateComment($createCommentInput: CreateCommentInput!) {\n  createComment(createCommentInput: $createCommentInput) {\n    id\n    content\n    rating\n  }\n}",
+								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"No es muy claro con las explicaciones.\",\n    \"rating\": 2,\n    \"professorId\": \"{{seedProfessorId2}}\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Consultas Públicas (Sin Auth)",
+			"item": [
+				{
+					"name": "Listar Universidades (Público)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Public universities list retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.universities).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Universities {\n  universities {\n    id\n    name\n    location\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Profesores (Público)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Public professors search works\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.professors).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Professors($filterInput: FilterProfessorInput) {\n  professors(filterInput: $filterInput) {\n    id\n    name\n    department\n    university {\n      name\n    }\n  }\n}",
+								"variables": "{\n  \"filterInput\": {\n    \"search\": \"Carlos\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Comentarios Públicos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Public comments retrieved\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.comments).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Comments($filterInput: FilterCommentInput) {\n  comments(filterInput: $filterInput) {\n    data {\n      id\n      content\n      rating\n      professor {\n        name\n      }\n      createdAt\n    }\n    total\n    page\n  }\n}",
+								"variables": "{\n  \"filterInput\": {\n    \"page\": 1,\n    \"limit\": 5\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints que no requieren autenticación"
+		},
+		{
+			"name": "7. Tests de Autorización",
+			"item": [
+				{
+					"name": "Crear Usuario sin Token (Debe Fallar)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateUser($createUserInput: CreateUserInput!) {\n  createUser(createUserInput: $createUserInput) {\n    id\n  }\n}",
+								"variables": "{\n  \"createUserInput\": {\n    \"email\": \"test@test.com\",\n    \"password\": \"pass\",\n    \"fullName\": \"Test\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Student Intenta Crear Usuario (Debe Fallar)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return forbidden error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateUser($createUserInput: CreateUserInput!) {\n  createUser(createUserInput: $createUserInput) {\n    id\n  }\n}",
+								"variables": "{\n  \"createUserInput\": {\n    \"email\": \"test@test.com\",\n    \"password\": \"pass\",\n    \"fullName\": \"Test\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Student no debe poder crear usuarios"
+					},
+					"response": []
+				},
+				{
+					"name": "Student Intenta Borrar Usuario Ajeno (Debe Fallar)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation RemoveComment($id: ID!) {\n  removeComment(id: $id) {\n    id\n  }\n}",
+								"variables": "{\n  \"id\": \"00000000-0000-0000-0000-000000000000\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token Inválido (Debe Fallar)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return unauthorized error\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "invalid.token.here",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Me {\n  me {\n    id\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Tests de seguridad y autorización"
+		},
+		{
+			"name": "8. Ejemplos con Fragments",
+			"item": [
+				{
+					"name": "Query con Fragment - User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Fragment query works\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.me).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "fragment UserFields on User {\n  id\n  email\n  fullName\n  roles\n  isActive\n  createdAt\n  updatedAt\n}\n\nquery Me {\n  me {\n    ...UserFields\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Ejemplo de uso de fragments para reutilizar campos"
+					},
+					"response": []
+				},
+				{
+					"name": "Query con Multiple Fragments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Multiple fragments query works\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.professors).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "fragment UniversityFields on University {\n  id\n  name\n  location\n}\n\nfragment ProfessorFields on Professor {\n  id\n  name\n  department\n  createdAt\n}\n\nquery Professors {\n  professors {\n    ...ProfessorFields\n    university {\n      ...UniversityFields\n    }\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Múltiples fragments anidados"
+					},
+					"response": []
+				},
+				{
+					"name": "Mutation con Fragment - Create Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Mutation with fragment works\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.createComment).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{studentToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "fragment CommentFields on Comment {\n  id\n  content\n  rating\n  createdAt\n  updatedAt\n}\n\nfragment CommentWithRelations on Comment {\n  ...CommentFields\n  professor {\n    id\n    name\n  }\n  student {\n    id\n    fullName\n  }\n}\n\nmutation CreateComment($createCommentInput: CreateCommentInput!) {\n  createComment(createCommentInput: $createCommentInput) {\n    ...CommentWithRelations\n  }\n}",
+								"variables": "{\n  \"createCommentInput\": {\n    \"content\": \"Buen profesor con fragment example\",\n    \"rating\": 4,\n    \"professorId\": \"{{seedProfessorId3}}\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Ejemplos de uso de fragments GraphQL para cumplir el criterio del 10%"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:9090/graphql",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentEmail",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "universityId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "professorId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "commentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "newUserId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seedUniversityId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seedProfessorId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seedProfessorId2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "seedProfessorId3",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

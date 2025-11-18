@@ -20,18 +20,24 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@as-integrations/express5": "^1.1.2",
+    "@faker-js/faker": "^10.1.0",
     "@nestjs/apollo": "^13.2.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/graphql": "^13.2.0",
+    "@nestjs/jwt": "^11.0.1",
+    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
     "apollo-server-express": "^3.13.0",
+    "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "express": "^5.1.0",
     "graphql": "^16.12.0",
+    "passport-jwt": "^4.0.1",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
@@ -48,7 +54,6 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
-    "bcrypt": "^6.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -70,15 +75,49 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
+    "rootDir": ".",
+    "testRegex": "test/.*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.json"
+        }
+      ]
     },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1"
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.ts"
     ],
-    "coverageDirectory": "../coverage",
+    "collectCoverageFrom": [
+      "src/auth/**/*.(t|j)s",
+      "!src/auth/entities/auth.entity.ts",
+      "src/comments/comments.service.ts",
+      "src/comments/comments.resolver.ts",
+      "src/professors/professors.service.ts",
+      "src/professors/professors.resolver.ts",
+      "src/universities/universities.service.ts",
+      "src/universities/universities.resolver.ts",
+      "src/users/users.service.ts",
+      "src/users/users.resolver.ts",
+      "src/seed/seed.service.ts",
+      "src/seed/seed.resolver.ts",
+      "!src/auth/**"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/auth/entities/auth.entity.ts"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 55,
+        "lines": 80,
+        "statements": 80
+      }
+    },
     "testEnvironment": "node"
   }
 }

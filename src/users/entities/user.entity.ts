@@ -1,43 +1,51 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { ValidRoles } from "src/auth/enums/valid-roles.enum";
 import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity('users')
 @ObjectType()
 export class User {
     @PrimaryGeneratedColumn('uuid')
     @Field(() => ID)
-    id:string;
+    id: string;
 
     @Column({
         type: 'text',
         unique: true
     })
     @Field(() => String)
-    email:string;
+    email: string;
 
     @Column('text')
     @Field(() => String)
-    fullName:string;
+    fullName: string;
 
-    @Column('text')
-    @Field(() => String)
-    password?:string;
+    @Column('text', { select: false })
+    password?: string;
 
-    @Column('bool', {default: true})
+    @Column('bool', { default: true })
     @Field(() => Boolean)
     isActive: boolean;
 
     @Column({
         type: 'text',
         array: true,
-        default: ['teacher']
+        default: [ValidRoles.student]
     })
     @Field(() => [String])
     roles: string[];
 
+    @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+    @Field(() => Date)
+    createdAt: Date;
+
+    @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    @Field(() => Date)
+    updatedAt: Date;
+
     @BeforeInsert()
     @BeforeUpdate()
-    checkFieldsBeforeChanges(){
+    checkFieldsBeforeChanges() {
         this.email = this.email.toLowerCase().trim();
     }
 }
