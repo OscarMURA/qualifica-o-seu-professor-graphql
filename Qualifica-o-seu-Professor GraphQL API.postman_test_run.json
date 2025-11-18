@@ -1,0 +1,1334 @@
+{
+	"id": "bf632ebe-c6fe-4e9a-9706-1d8b8487519b",
+	"name": "Qualifica-o-seu-Professor GraphQL API",
+	"timestamp": "2025-11-18T04:50:17.637Z",
+	"collection_id": "42534240-83b11044-5f29-4543-a828-1e145cb7b929",
+	"folder_id": 0,
+	"environment_id": "42534240-1a03a0c8-a5b5-42a8-b76b-87b39eb645f1",
+	"totalPass": 23,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-11-18T04:50:13.152Z",
+	"totalFail": 29,
+	"results": [
+		{
+			"id": "084158f2-23a1-4bfa-a271-3cd656ce0b34",
+			"name": "Signup - Crear Student",
+			"url": "http://localhost:9090/graphql",
+			"time": 204,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Response has data.signup": true,
+				"Token is returned": true,
+				"User data is returned": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has data.signup": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Token is returned": {
+					"pass": 1,
+					"fail": 0
+				},
+				"User data is returned": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				204
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Response has data.signup": true,
+					"Token is returned": true,
+					"User data is returned": true
+				}
+			]
+		},
+		{
+			"id": "24c45129-3147-4f3a-bd41-6fb7e1028f54",
+			"name": "Signup - Crear Admin",
+			"url": "http://localhost:9090/graphql",
+			"time": 162,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": true,
+				"Admin signup successful": true
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Admin signup successful": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				162
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": true,
+					"Admin signup successful": true
+				}
+			]
+		},
+		{
+			"id": "ae3a2d68-5659-4109-b6ee-94ba28140f30",
+			"name": "Login - Student",
+			"url": "http://localhost:9090/graphql",
+			"time": 107,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login successful": true
+			},
+			"testPassFailCounts": {
+				"Login successful": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				107
+			],
+			"allTests": [
+				{
+					"Login successful": true
+				}
+			]
+		},
+		{
+			"id": "37addb86-184e-4ebe-8e3e-1047f23bc7ca",
+			"name": "Login - Admin",
+			"url": "http://localhost:9090/graphql",
+			"time": 13,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"Admin login successful": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Admin login successful": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"Admin login successful": false
+				}
+			]
+		},
+		{
+			"id": "470c9265-dc47-47b2-bd71-d8a494e67440",
+			"name": "Me - Usuario Autenticado",
+			"url": "http://localhost:9090/graphql",
+			"time": 11,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": true,
+				"User info retrieved": true
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 1,
+					"fail": 0
+				},
+				"User info retrieved": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				11
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": true,
+					"User info retrieved": true
+				}
+			]
+		},
+		{
+			"id": "a44ef976-9a92-41ed-b554-6c3a67d69c4c",
+			"name": "Login - Credenciales Inválidas",
+			"url": "http://localhost:9090/graphql",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Should return error": true
+			},
+			"testPassFailCounts": {
+				"Should return error": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Should return error": true
+				}
+			]
+		},
+		{
+			"id": "9951c836-e7a4-477c-a97d-0ba7546eb599",
+			"name": "Listar Todos los Usuarios",
+			"url": "http://localhost:9090/graphql",
+			"time": 14,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"Users list retrieved": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Users list retrieved": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"Users list retrieved": false
+				}
+			]
+		},
+		{
+			"id": "ed4729c1-f5ad-4655-bfb0-f5a5b9a87530",
+			"name": "Crear Usuario (Admin)",
+			"url": "http://localhost:9090/graphql",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"User created": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"User created": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"User created": false
+				}
+			]
+		},
+		{
+			"id": "da67e292-e54f-4342-9f21-049e2d8c254f",
+			"name": "Obtener Usuario por ID",
+			"url": "http://localhost:9090/graphql",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"User found": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"User found": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				12
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"User found": false
+				}
+			]
+		},
+		{
+			"id": "f7075946-99b4-4f4f-9bde-8fde8b69605f",
+			"name": "Actualizar Usuario",
+			"url": "http://localhost:9090/graphql",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"User updated": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"User updated": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				12
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"User updated": false
+				}
+			]
+		},
+		{
+			"id": "2a7831e3-7ac3-4322-ba89-91ceb3835d8f",
+			"name": "Eliminar Usuario",
+			"url": "http://localhost:9090/graphql",
+			"time": 13,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"User removed": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"User removed": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				13
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"User removed": false
+				}
+			]
+		},
+		{
+			"id": "7c6f59c0-2885-4a19-b105-7b89d405b9ad",
+			"name": "Crear Universidad",
+			"url": "http://localhost:9090/graphql",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"No GraphQL errors": false,
+				"University created": false
+			},
+			"testPassFailCounts": {
+				"No GraphQL errors": {
+					"pass": 0,
+					"fail": 1
+				},
+				"University created": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"No GraphQL errors": false,
+					"University created": false
+				}
+			]
+		},
+		{
+			"id": "bd90be74-6c14-4d91-b19f-db2c8b9e3581",
+			"name": "Listar Universidades",
+			"url": "http://localhost:9090/graphql",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Universities list retrieved": true
+			},
+			"testPassFailCounts": {
+				"Universities list retrieved": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Universities list retrieved": true
+				}
+			]
+		},
+		{
+			"id": "6695ecc0-4c0d-40b8-bd79-6ffc47b14525",
+			"name": "Obtener Universidad por ID",
+			"url": "http://localhost:9090/graphql",
+			"time": 55,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"University found": false
+			},
+			"testPassFailCounts": {
+				"University found": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				55
+			],
+			"allTests": [
+				{
+					"University found": false
+				}
+			]
+		},
+		{
+			"id": "bdf3fd08-1f3f-4006-9463-9321a0b95c9a",
+			"name": "Actualizar Universidad",
+			"url": "http://localhost:9090/graphql",
+			"time": 17,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"University updated": false
+			},
+			"testPassFailCounts": {
+				"University updated": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				17
+			],
+			"allTests": [
+				{
+					"University updated": false
+				}
+			]
+		},
+		{
+			"id": "f9ea6677-cb70-41a7-8f23-549d5bef6a3f",
+			"name": "Eliminar Universidad",
+			"url": "http://localhost:9090/graphql",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"University removed": false
+			},
+			"testPassFailCounts": {
+				"University removed": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"University removed": false
+				}
+			]
+		},
+		{
+			"id": "c5f72011-42ca-451d-b291-ffdc872625cc",
+			"name": "Crear Profesor",
+			"url": "http://localhost:9090/graphql",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Professor created": false
+			},
+			"testPassFailCounts": {
+				"Professor created": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Professor created": false
+				}
+			]
+		},
+		{
+			"id": "018f67d2-8462-45eb-a792-1c636c8f2d36",
+			"name": "Listar Profesores (Sin Filtros)",
+			"url": "http://localhost:9090/graphql",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Professors list retrieved": true
+			},
+			"testPassFailCounts": {
+				"Professors list retrieved": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Professors list retrieved": true
+				}
+			]
+		},
+		{
+			"id": "67d064ee-b911-4c11-8bb4-7a3026050655",
+			"name": "Listar Profesores (Con Filtros)",
+			"url": "http://localhost:9090/graphql",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Filtered professors retrieved": false
+			},
+			"testPassFailCounts": {
+				"Filtered professors retrieved": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Filtered professors retrieved": false
+				}
+			]
+		},
+		{
+			"id": "87aee10e-ecde-4964-82e9-de2e8740d37c",
+			"name": "Obtener Profesor por ID",
+			"url": "http://localhost:9090/graphql",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Professor found": false
+			},
+			"testPassFailCounts": {
+				"Professor found": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				12
+			],
+			"allTests": [
+				{
+					"Professor found": false
+				}
+			]
+		},
+		{
+			"id": "59b6cb67-3700-44d6-858b-5e32d56cc104",
+			"name": "Actualizar Profesor",
+			"url": "http://localhost:9090/graphql",
+			"time": 11,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Professor updated": false
+			},
+			"testPassFailCounts": {
+				"Professor updated": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				11
+			],
+			"allTests": [
+				{
+					"Professor updated": false
+				}
+			]
+		},
+		{
+			"id": "51a5c0b1-2c19-4562-bfbd-6d77a393c8e1",
+			"name": "Eliminar Profesor",
+			"url": "http://localhost:9090/graphql",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Professor removed": false
+			},
+			"testPassFailCounts": {
+				"Professor removed": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Professor removed": false
+				}
+			]
+		},
+		{
+			"id": "9b70b064-63a2-47a9-9a08-89910e895b97",
+			"name": "Crear Comentario (Student)",
+			"url": "http://localhost:9090/graphql",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Comment created": false
+			},
+			"testPassFailCounts": {
+				"Comment created": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Comment created": false
+				}
+			]
+		},
+		{
+			"id": "99e979a1-8316-48f8-a1a3-501d51f66aac",
+			"name": "Listar Comentarios (Sin Filtros)",
+			"url": "http://localhost:9090/graphql",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Comments retrieved": true
+			},
+			"testPassFailCounts": {
+				"Comments retrieved": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Comments retrieved": true
+				}
+			]
+		},
+		{
+			"id": "86e08ee1-41d0-4ffd-b6c4-51df84fd520e",
+			"name": "Listar Comentarios (Con Filtros y Paginación)",
+			"url": "http://localhost:9090/graphql",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Filtered comments retrieved": false
+			},
+			"testPassFailCounts": {
+				"Filtered comments retrieved": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Filtered comments retrieved": false
+				}
+			]
+		},
+		{
+			"id": "2d8b5ae0-06a5-471c-95d2-5c219a9c2d71",
+			"name": "Obtener Rating de Profesor",
+			"url": "http://localhost:9090/graphql",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Professor rating retrieved": false
+			},
+			"testPassFailCounts": {
+				"Professor rating retrieved": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Professor rating retrieved": false
+				}
+			]
+		},
+		{
+			"id": "da84d821-1a63-4fe7-a3a1-b18477e92a10",
+			"name": "Actualizar Comentario Propio",
+			"url": "http://localhost:9090/graphql",
+			"time": 14,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Comment updated": false
+			},
+			"testPassFailCounts": {
+				"Comment updated": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				14
+			],
+			"allTests": [
+				{
+					"Comment updated": false
+				}
+			]
+		},
+		{
+			"id": "048a131a-4558-483a-a5b5-f32caa60b41f",
+			"name": "Eliminar Comentario Propio",
+			"url": "http://localhost:9090/graphql",
+			"time": 10,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Comment removed": false
+			},
+			"testPassFailCounts": {
+				"Comment removed": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				10
+			],
+			"allTests": [
+				{
+					"Comment removed": false
+				}
+			]
+		},
+		{
+			"id": "9152d4b4-9804-4e2a-99d9-77d80dea6adc",
+			"name": "Crear Comentario con Rating Bajo",
+			"url": "http://localhost:9090/graphql",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Low rating comment created": false
+			},
+			"testPassFailCounts": {
+				"Low rating comment created": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Low rating comment created": false
+				}
+			]
+		},
+		{
+			"id": "d73b86f4-fafc-49f3-9c8f-1fb0ae19771e",
+			"name": "Listar Universidades (Público)",
+			"url": "http://localhost:9090/graphql",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Public universities list retrieved": true
+			},
+			"testPassFailCounts": {
+				"Public universities list retrieved": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Public universities list retrieved": true
+				}
+			]
+		},
+		{
+			"id": "e1045bc3-ade1-44f4-8f3a-16baf47ca914",
+			"name": "Buscar Profesores (Público)",
+			"url": "http://localhost:9090/graphql",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Public professors search works": true
+			},
+			"testPassFailCounts": {
+				"Public professors search works": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Public professors search works": true
+				}
+			]
+		},
+		{
+			"id": "cf554731-c88d-4d06-b1ae-9eb6a71ced82",
+			"name": "Ver Comentarios Públicos",
+			"url": "http://localhost:9090/graphql",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Public comments retrieved": true
+			},
+			"testPassFailCounts": {
+				"Public comments retrieved": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Public comments retrieved": true
+				}
+			]
+		},
+		{
+			"id": "f537dcc2-dcc0-4b8b-86ff-936935369cd8",
+			"name": "Crear Usuario sin Token (Debe Fallar)",
+			"url": "http://localhost:9090/graphql",
+			"time": 4,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Should return unauthorized error": true
+			},
+			"testPassFailCounts": {
+				"Should return unauthorized error": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				4
+			],
+			"allTests": [
+				{
+					"Should return unauthorized error": true
+				}
+			]
+		},
+		{
+			"id": "ce837bf0-0ee0-4863-9363-5d329f8423dc",
+			"name": "Student Intenta Crear Usuario (Debe Fallar)",
+			"url": "http://localhost:9090/graphql",
+			"time": 9,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Should return forbidden error": true
+			},
+			"testPassFailCounts": {
+				"Should return forbidden error": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				9
+			],
+			"allTests": [
+				{
+					"Should return forbidden error": true
+				}
+			]
+		},
+		{
+			"id": "1b912704-ac85-4115-892a-7417030b0c01",
+			"name": "Student Intenta Borrar Usuario Ajeno (Debe Fallar)",
+			"url": "http://localhost:9090/graphql",
+			"time": 16,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Should return error": true
+			},
+			"testPassFailCounts": {
+				"Should return error": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				16
+			],
+			"allTests": [
+				{
+					"Should return error": true
+				}
+			]
+		},
+		{
+			"id": "91ebd186-9a6f-47df-aad1-124ed8587b89",
+			"name": "Token Inválido (Debe Fallar)",
+			"url": "http://localhost:9090/graphql",
+			"time": 3,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Should return unauthorized error": true
+			},
+			"testPassFailCounts": {
+				"Should return unauthorized error": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				3
+			],
+			"allTests": [
+				{
+					"Should return unauthorized error": true
+				}
+			]
+		},
+		{
+			"id": "f16f87be-f059-4596-92ed-7b40beae988f",
+			"name": "Ejecutar Seed",
+			"url": "http://localhost:9090/graphql",
+			"time": 16,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Seed executed": true
+			},
+			"testPassFailCounts": {
+				"Seed executed": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				16
+			],
+			"allTests": [
+				{
+					"Seed executed": true
+				}
+			]
+		},
+		{
+			"id": "82f501e4-ab91-43fe-b631-183b2e63d5b7",
+			"name": "Query con Fragment - User",
+			"url": "http://localhost:9090/graphql",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Fragment query works": true
+			},
+			"testPassFailCounts": {
+				"Fragment query works": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Fragment query works": true
+				}
+			]
+		},
+		{
+			"id": "2ff9d077-3407-4cce-acb3-8c13d9a9f70c",
+			"name": "Query con Multiple Fragments",
+			"url": "http://localhost:9090/graphql",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Multiple fragments query works": true
+			},
+			"testPassFailCounts": {
+				"Multiple fragments query works": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Multiple fragments query works": true
+				}
+			]
+		},
+		{
+			"id": "e4662e9e-039f-4f42-a53d-be2daf933911",
+			"name": "Mutation con Fragment - Create Comment",
+			"url": "http://localhost:9090/graphql",
+			"time": 8,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Mutation with fragment works": false
+			},
+			"testPassFailCounts": {
+				"Mutation with fragment works": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				8
+			],
+			"allTests": [
+				{
+					"Mutation with fragment works": false
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 861,
+	"collection": {
+		"requests": [
+			{
+				"id": "084158f2-23a1-4bfa-a271-3cd656ce0b34",
+				"method": "POST"
+			},
+			{
+				"id": "24c45129-3147-4f3a-bd41-6fb7e1028f54",
+				"method": "POST"
+			},
+			{
+				"id": "ae3a2d68-5659-4109-b6ee-94ba28140f30",
+				"method": "POST"
+			},
+			{
+				"id": "37addb86-184e-4ebe-8e3e-1047f23bc7ca",
+				"method": "POST"
+			},
+			{
+				"id": "470c9265-dc47-47b2-bd71-d8a494e67440",
+				"method": "POST"
+			},
+			{
+				"id": "a44ef976-9a92-41ed-b554-6c3a67d69c4c",
+				"method": "POST"
+			},
+			{
+				"id": "9951c836-e7a4-477c-a97d-0ba7546eb599",
+				"method": "POST"
+			},
+			{
+				"id": "ed4729c1-f5ad-4655-bfb0-f5a5b9a87530",
+				"method": "POST"
+			},
+			{
+				"id": "da67e292-e54f-4342-9f21-049e2d8c254f",
+				"method": "POST"
+			},
+			{
+				"id": "f7075946-99b4-4f4f-9bde-8fde8b69605f",
+				"method": "POST"
+			},
+			{
+				"id": "2a7831e3-7ac3-4322-ba89-91ceb3835d8f",
+				"method": "POST"
+			},
+			{
+				"id": "7c6f59c0-2885-4a19-b105-7b89d405b9ad",
+				"method": "POST"
+			},
+			{
+				"id": "bd90be74-6c14-4d91-b19f-db2c8b9e3581",
+				"method": "POST"
+			},
+			{
+				"id": "6695ecc0-4c0d-40b8-bd79-6ffc47b14525",
+				"method": "POST"
+			},
+			{
+				"id": "bdf3fd08-1f3f-4006-9463-9321a0b95c9a",
+				"method": "POST"
+			},
+			{
+				"id": "f9ea6677-cb70-41a7-8f23-549d5bef6a3f",
+				"method": "POST"
+			},
+			{
+				"id": "c5f72011-42ca-451d-b291-ffdc872625cc",
+				"method": "POST"
+			},
+			{
+				"id": "018f67d2-8462-45eb-a792-1c636c8f2d36",
+				"method": "POST"
+			},
+			{
+				"id": "67d064ee-b911-4c11-8bb4-7a3026050655",
+				"method": "POST"
+			},
+			{
+				"id": "87aee10e-ecde-4964-82e9-de2e8740d37c",
+				"method": "POST"
+			},
+			{
+				"id": "59b6cb67-3700-44d6-858b-5e32d56cc104",
+				"method": "POST"
+			},
+			{
+				"id": "51a5c0b1-2c19-4562-bfbd-6d77a393c8e1",
+				"method": "POST"
+			},
+			{
+				"id": "9b70b064-63a2-47a9-9a08-89910e895b97",
+				"method": "POST"
+			},
+			{
+				"id": "99e979a1-8316-48f8-a1a3-501d51f66aac",
+				"method": "POST"
+			},
+			{
+				"id": "86e08ee1-41d0-4ffd-b6c4-51df84fd520e",
+				"method": "POST"
+			},
+			{
+				"id": "2d8b5ae0-06a5-471c-95d2-5c219a9c2d71",
+				"method": "POST"
+			},
+			{
+				"id": "da84d821-1a63-4fe7-a3a1-b18477e92a10",
+				"method": "POST"
+			},
+			{
+				"id": "048a131a-4558-483a-a5b5-f32caa60b41f",
+				"method": "POST"
+			},
+			{
+				"id": "9152d4b4-9804-4e2a-99d9-77d80dea6adc",
+				"method": "POST"
+			},
+			{
+				"id": "d73b86f4-fafc-49f3-9c8f-1fb0ae19771e",
+				"method": "POST"
+			},
+			{
+				"id": "e1045bc3-ade1-44f4-8f3a-16baf47ca914",
+				"method": "POST"
+			},
+			{
+				"id": "cf554731-c88d-4d06-b1ae-9eb6a71ced82",
+				"method": "POST"
+			},
+			{
+				"id": "f537dcc2-dcc0-4b8b-86ff-936935369cd8",
+				"method": "POST"
+			},
+			{
+				"id": "ce837bf0-0ee0-4863-9363-5d329f8423dc",
+				"method": "POST"
+			},
+			{
+				"id": "1b912704-ac85-4115-892a-7417030b0c01",
+				"method": "POST"
+			},
+			{
+				"id": "91ebd186-9a6f-47df-aad1-124ed8587b89",
+				"method": "POST"
+			},
+			{
+				"id": "f16f87be-f059-4596-92ed-7b40beae988f",
+				"method": "POST"
+			},
+			{
+				"id": "82f501e4-ab91-43fe-b631-183b2e63d5b7",
+				"method": "POST"
+			},
+			{
+				"id": "2ff9d077-3407-4cce-acb3-8c13d9a9f70c",
+				"method": "POST"
+			},
+			{
+				"id": "e4662e9e-039f-4f42-a53d-be2daf933911",
+				"method": "POST"
+			}
+		]
+	}
+}

@@ -1,0 +1,354 @@
+{
+	"info": {
+		"_postman_id": "577c0d2d-675c-4e0b-b9ac-7e2006e27182",
+		"name": "GraphQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44853341"
+	},
+	"item": [
+		{
+			"name": "Autenticacion",
+			"item": [
+				{
+					"name": "Signup (Registrar nuevo estudiante)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM5NjkxZmMzLTUyZDMtNDRiMi1hMTk2LWQ0MzcwZDg0ZjVlYiIsImVtYWlsIjoiZGF2aWRAbWFpbC5jb20iLCJpYXQiOjE3NjMxMzA5NTUsImV4cCI6MTc2MzEzNDU1NX0.0fbIkmWD0oclFq6laa_OfYqXgoM6ycXgZwb40SA-igY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "\nmutation UserSignup($input: SignupInput!) {\n  signup(signupInput: $input) {\n    user {\n      fullName,\n      isActive,\n      email\n    }\n  }\n}",
+								"variables": "{\n    \"input\": {\n    \"fullName\": \"jenn\",\n    \"email\": \"jenn@mail.com\",\n    \"password\": \"holamundo\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9090/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login Admin",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Login($loginInput: LoginInput!) {\n  login(loginInput: $loginInput) {\n    token\n    user {\n      id\n      email\n      fullName\n      roles\n    }\n  }\n}",
+								"variables": "{\n  \"loginInput\": {\n    \"email\": \"admin@example.com\",\n    \"password\": \"password123\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{grahpDomain}}/graphql",
+							"host": [
+								"{{grahpDomain}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Me (Obtener perfil actual)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Me {\n  me {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": ""
+							}
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "USUARIOS (Solo Admin)",
+			"item": [
+				{
+					"name": "Crear Student - default",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateUser($createUserInput: CreateUserInput!) {\n  createUser(createUserInput: $createUserInput) {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n  }\n}",
+								"variables": "{\n  \"createUserInput\": {\n    \"email\": \"newstudent@example.com\",\n    \"password\": \"password123\",\n    \"fullName\": \"New Student\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphDomain}}/graphql",
+							"host": [
+								"{{graphDomain}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation CreateUser($createUserInput: CreateUserInput!) {\n  createUser(createUserInput: $createUserInput) {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n  }\n}",
+								"variables": "{\n  \"createUserInput\": {\n    \"email\": \"newstudent@example.com\",\n    \"password\": \"password123\",\n    \"fullName\": \"New Student\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphDomain}}/graphql",
+							"host": [
+								"{{graphDomain}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Todos los Usuarios",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Users {\n  users {\n    id\n    email\n    fullName\n    roles\n    isActive\n    createdAt\n    updatedAt\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphDomain}}/graphql",
+							"host": [
+								"{{graphDomain}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation UpdateUser($id: ID!, $updateUserInput: UpdateUserInput!) {\n  updateUser(id: $id, updateUserInput: $updateUserInput) {\n    id\n    email\n    fullName\n    roles\n    isActive\n  }\n}",
+								"variables": "{\n  \"id\": \"{{lastCreatedUserId}}\",\n  \"updateUserInput\": {\n    \"fullName\": \"Updated Name\",\n    \"email\": \"updated@example.com\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphDomain}}/graphql",
+							"host": [
+								"{{graphDomain}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Usuario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenAdmin}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation RemoveUser($id: ID!) {\n  removeUser(id: $id) {\n    id\n    email\n    fullName\n  }\n}",
+								"variables": "{\n  \"id\": \"{{lastCreatedUserId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphDomain}}/graphql",
+							"host": [
+								"{{graphDomain}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Unseed (Limpiar datos)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation ExecuteUnseed {\n  executeUnseed {\n    message\n  }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{graphDomain}}/graphql\n\n",
+					"host": [
+						"{{graphDomain}}"
+					],
+					"path": [
+						"graphql\n\n"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "seed",
+			"request": {
+				"method": "POST",
+				"header": []
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "graphDomain",
+			"value": ""
+		},
+		{
+			"key": "tokenAdmin",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "userEmail",
+			"value": ""
+		},
+		{
+			"key": "lastCreatedUserId",
+			"value": ""
+		},
+		{
+			"key": "lastCreatedUserEmail",
+			"value": ""
+		},
+		{
+			"key": "lastCreatedUserName",
+			"value": ""
+		}
+	]
+}
