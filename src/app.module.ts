@@ -24,11 +24,14 @@ import { UsersModule } from './users/users.module';
       type: 'postgres',
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT ?? '5432'),
-      database: process.env.DB_DATABASE,
+      database: process.env.DB_NAME || process.env.DB_DATABASE,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true, //Solo usarla en ambientes bajos, en prod hacer migraciones
+      ssl: process.env.DB_SSLMODE !== 'disable' ? {
+        rejectUnauthorized: false
+      } : false,
     }),
     AuthModule,
     UsersModule,
