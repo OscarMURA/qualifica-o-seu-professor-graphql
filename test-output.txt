@@ -1,0 +1,101 @@
+$ jest --coverage
+PASS src/users/dto/users-dto.spec.ts
+PASS src/app.controller.spec.ts
+PASS src/auth/dto/auth-dto.spec.ts
+PASS src/users/users.service.spec.ts
+PASS src/app.module.spec.ts
+PASS src/users/users.resolver.spec.ts
+PASS src/users/entities/user.entity.spec.ts
+FAIL src/main.spec.ts
+  ÔùÅ Main Bootstrap Configuration ÔÇ║ ValidationPipe configuration ÔÇ║ should create pipe with both options
+
+    TypeError: Cannot read properties of undefined (reading 'whitelist')
+
+      45 |       });
+      46 |       
+    > 47 |       expect(pipe['options'].whitelist).toBe(true);
+         |                              ^
+      48 |       expect(pipe['options'].forbidNonWhitelisted).toBe(true);
+      49 |     });
+      50 |   });
+
+      at Object.<anonymous> (main.spec.ts:47:30)
+
+  ÔùÅ Main Bootstrap Configuration ÔÇ║ ValidationPipe class ÔÇ║ should have options property
+
+    expect(received).toBeDefined()
+
+    Received: undefined
+
+       95 |
+       96 |     it('should have options property', () => {
+    >  97 |       expect(pipe['options']).toBeDefined();
+          |                               ^
+       98 |     });
+       99 |
+      100 |     it('should store whitelist option', () => {
+
+      at Object.<anonymous> (main.spec.ts:97:31)
+
+  ÔùÅ Main Bootstrap Configuration ÔÇ║ ValidationPipe class ÔÇ║ should store whitelist option
+
+    TypeError: Cannot read properties of undefined (reading 'whitelist')
+
+       99 |
+      100 |     it('should store whitelist option', () => {
+    > 101 |       expect(pipe['options'].whitelist).toBe(true);
+          |                              ^
+      102 |     });
+      103 |
+      104 |     it('should store forbidNonWhitelisted option', () => {
+
+      at Object.<anonymous> (main.spec.ts:101:30)
+
+  ÔùÅ Main Bootstrap Configuration ÔÇ║ ValidationPipe class ÔÇ║ should store forbidNonWhitelisted option
+
+    TypeError: Cannot read properties of undefined (reading 'forbidNonWhitelisted')
+
+      103 |
+      104 |     it('should store forbidNonWhitelisted option', () => {
+    > 105 |       expect(pipe['options'].forbidNonWhitelisted).toBe(true);
+          |                              ^
+      106 |     });
+      107 |
+      108 |     it('should create multiple instances', () => {
+
+      at Object.<anonymous> (main.spec.ts:105:30)
+
+------------------------|---------|----------|---------|---------|-------------------
+File                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------------------|---------|----------|---------|---------|-------------------
+All files               |   75.93 |    68.18 |   40.74 |   73.63 |                   
+ src                    |   72.72 |    83.33 |      75 |   66.66 |                   
+  app.controller.ts     |     100 |       75 |     100 |     100 | 6                 
+  app.module.ts         |     100 |      100 |     100 |     100 |                   
+  app.service.ts        |     100 |      100 |     100 |     100 |                   
+  main.ts               |       0 |      100 |       0 |       0 | 1-18              
+ src/auth               |     100 |      100 |     100 |     100 |                   
+  auth.module.ts        |     100 |      100 |     100 |     100 |                   
+ src/auth/dto           |      75 |      100 |       0 |   68.75 |                   
+  login.input.ts        |   77.77 |      100 |       0 |   71.42 | 6,10              
+  signup.input.ts       |   72.72 |      100 |       0 |   66.66 | 6,10,14           
+ src/auth/entities      |       0 |      100 |     100 |       0 |                   
+  auth.entity.ts        |       0 |      100 |     100 |       0 | 1                 
+ src/auth/types         |       0 |        0 |       0 |       0 |                   
+  auth-response.type.ts |       0 |        0 |       0 |       0 | 1-11              
+ src/users              |   95.34 |    83.33 |   77.77 |   97.22 |                   
+  users.module.ts       |     100 |      100 |     100 |     100 |                   
+  users.resolver.ts     |   81.81 |       75 |      50 |    87.5 | 9                 
+  users.service.ts      |     100 |     87.5 |     100 |     100 | 13                
+ src/users/dto          |     100 |      100 |     100 |     100 |                   
+  create-user.input.ts  |     100 |      100 |     100 |     100 |                   
+  update-user.input.ts  |     100 |      100 |     100 |     100 |                   
+ src/users/entities     |   68.42 |      100 |   14.28 |    64.7 |                   
+  user.entity.ts        |   68.42 |      100 |   14.28 |    64.7 | 8,15,19,23,27,35  
+------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 failed, 7 passed, 8 total
+Tests:       4 failed, 376 passed, 380 total
+Snapshots:   0 total
+Time:        6.002 s
+Ran all test suites.
+error: script "test:cov" exited with code 1
