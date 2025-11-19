@@ -1,14 +1,52 @@
 {
 	"info": {
-		"_postman_id": "qualifica-professor-api-2025",
+		"_postman_id": "22918040-d0ce-41c2-8673-cd42f2422e8b",
 		"name": "Qualifica-o-seu-Professor GraphQL API",
 		"description": "Colección completa de pruebas para el API GraphQL de calificación de profesores.\n\n## Variables de Entorno\n- `baseUrl`: URL del API (http://localhost:9090/api/graphql)\n- `token`: Token JWT (se actualiza automáticamente tras login)\n- `userId`: ID del usuario autenticado\n- `professorId`: ID de un profesor de prueba\n- `universityId`: ID de una universidad de prueba\n- `commentId`: ID de un comentario de prueba\n\n## Flujos de Prueba\n1. Autenticación (Signup & Login)\n2. Gestión de Usuarios (Admin)\n3. Gestión de Universidades (Admin)\n4. Gestión de Profesores (Admin + Public)\n5. Gestión de Comentarios (Student + Admin)\n6. Consultas Públicas\n7. Tests de Autorización",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44853341"
 	},
 	"item": [
 		{
 			"name": "0. Setup - Seed Data",
 			"item": [
+				{
+					"name": "Ejecutar Unseed (Limpiar BD)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Database cleaned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.data.executeUnseed).to.exist;",
+									"    console.log(\"✅ Database cleaned:\", jsonData.data.executeUnseed.message);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation ExecuteUnseed {\n  executeUnseed {\n    message\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Limpia la base de datos antes de ejecutar el seed para garantizar datos frescos"
+					},
+					"response": []
+				},
 				{
 					"name": "Ejecutar Seed",
 					"event": [
@@ -16,13 +54,26 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Seed executed\", function () {",
+									"pm.test(\"Seed executed successfully\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    pm.expect(jsonData.data.executeSeed).to.exist;",
+									"    ",
+									"    // Log del mensaje del seed",
+									"    console.log(\"📦 Seed message:\", jsonData.data.executeSeed.message);",
+									"    console.log(\"📊 Universities:\", jsonData.data.executeSeed.universities);",
+									"    console.log(\"📊 Professors:\", jsonData.data.executeSeed.professors);",
+									"    console.log(\"📊 Students:\", jsonData.data.executeSeed.students);",
+									"    console.log(\"📊 Comments:\", jsonData.data.executeSeed.comments);",
+									"    ",
 									"    // Guardar info del admin para usar en tests",
 									"    if (jsonData.data.executeSeed.admin) {",
 									"        pm.environment.set(\"adminId\", jsonData.data.executeSeed.admin.id);",
+									"        console.log(\"✅ Admin ID:\", jsonData.data.executeSeed.admin.id);",
 									"    }",
+									"    ",
+									"    // Validar que se crearon datos",
+									"    pm.expect(jsonData.data.executeSeed.universities).to.be.greaterThan(0);",
+									"    pm.expect(jsonData.data.executeSeed.professors).to.be.greaterThan(0);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -62,22 +113,33 @@
 									"    // Guardar ID de la primera universidad",
 									"    if (jsonData.data.universities && jsonData.data.universities.length > 0) {",
 									"        pm.environment.set(\"seedUniversityId\", jsonData.data.universities[0].id);",
+									"        console.log(\"✅ seedUniversityId:\", jsonData.data.universities[0].id);",
+									"    } else {",
+									"        console.error(\"❌ No universities found in seed data!\");",
 									"    }",
 									"    ",
 									"    // Guardar ID del primer, segundo y tercer profesor",
 									"    if (jsonData.data.professors && jsonData.data.professors.length > 0) {",
 									"        pm.environment.set(\"seedProfessorId\", jsonData.data.professors[0].id);",
 									"        pm.environment.set(\"professorId\", jsonData.data.professors[0].id);",
+									"        console.log(\"✅ seedProfessorId:\", jsonData.data.professors[0].id);",
+									"    } else {",
+									"        console.error(\"❌ No professors found in seed data!\");",
 									"    }",
 									"    if (jsonData.data.professors && jsonData.data.professors.length > 1) {",
 									"        pm.environment.set(\"seedProfessorId2\", jsonData.data.professors[1].id);",
+									"        console.log(\"✅ seedProfessorId2:\", jsonData.data.professors[1].id);",
 									"    }",
 									"    if (jsonData.data.professors && jsonData.data.professors.length > 2) {",
 									"        pm.environment.set(\"seedProfessorId3\", jsonData.data.professors[2].id);",
+									"        console.log(\"✅ seedProfessorId3:\", jsonData.data.professors[2].id);",
 									"    }",
 									"    ",
+									"    // Validar que haya datos",
 									"    pm.expect(jsonData.data.universities).to.be.an('array');",
 									"    pm.expect(jsonData.data.professors).to.be.an('array');",
+									"    pm.expect(jsonData.data.universities.length).to.be.greaterThan(0, \"No universities in seed\");",
+									"    pm.expect(jsonData.data.professors.length).to.be.greaterThan(0, \"No professors in seed\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -883,8 +945,18 @@
 								"exec": [
 									"pm.test(\"Professor created\", function () {",
 									"    var jsonData = pm.response.json();",
+									"    ",
+									"    // Si hay errores, mostrarlos para debug",
+									"    if (jsonData.errors) {",
+									"        console.error(\"❌ GraphQL Errors:\", JSON.stringify(jsonData.errors, null, 2));",
+									"        pm.expect.fail(\"GraphQL error: \" + jsonData.errors[0].message);",
+									"    }",
+									"    ",
+									"    pm.expect(jsonData.data).to.exist;",
+									"    pm.expect(jsonData.data.createProfessor).to.exist;",
 									"    pm.expect(jsonData.data.createProfessor.id).to.exist;",
 									"    pm.environment.set(\"professorId\", jsonData.data.createProfessor.id);",
+									"    console.log(\"✅ Professor created with ID:\", jsonData.data.createProfessor.id);",
 									"});"
 								],
 								"type": "text/javascript"

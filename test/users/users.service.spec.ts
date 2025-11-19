@@ -156,4 +156,82 @@ describe('UsersService', () => {
         .toThrow(InternalServerErrorException);
     });
   });
+
+  describe('create con errores', () => {
+    it('lanza BadRequest cuando hay duplicados', async () => {
+      const input: SignupInput = { email: 'dup@example.com', fullName: 'Dup', password: 'pass' } as any;
+      repo.create.mockReturnValue(buildUser());
+      repo.save.mockRejectedValue({ code: '23505', detail: 'key email duplicated' });
+      await expect(service.create(input)).rejects.toThrow(BadRequestException);
+    });
+
+    it('lanza InternalServerError en error inesperado', async () => {
+      const input: SignupInput = { email: 'test@example.com', fullName: 'Test', password: 'pass' } as any;
+      repo.create.mockReturnValue(buildUser());
+      repo.save.mockRejectedValue({ code: 'UNKNOWN', detail: 'unexpected' });
+      await expect(service.create(input)).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('createUser con errores', () => {
+    it('lanza BadRequest cuando email está duplicado', async () => {
+      const input: CreateUserInput = { email: 'dup@example.com', fullName: 'Dup', password: 'pass', roles: ['student'], isActive: true } as any;
+      repo.create.mockReturnValue(buildUser());
+      repo.save.mockRejectedValue({ code: '23505', detail: 'key email duplicated' });
+      await expect(service.createUser(input)).rejects.toThrow(BadRequestException);
+    });
+
+    it('lanza InternalServerError para errores desconocidos', async () => {
+      const input: CreateUserInput = { email: 'test@example.com', fullName: 'Test', password: 'pass', roles: ['student'], isActive: true } as any;
+      repo.create.mockReturnValue(buildUser());
+      repo.save.mockRejectedValue({ code: 'FATAL', detail: 'db crash' });
+      await expect(service.createUser(input)).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('update con errores', () => {
+    it('lanza BadRequest cuando hay conflicto', async () => {
+      preloadSpy.mockResolvedValue(buildUser());
+      repo.save.mockRejectedValue({ code: '23505', detail: 'key conflict' });
+      await expect(service.update('u-1', { email: 'conflict@example.com' } as any)).rejects.toThrow(BadRequestException);
+    });
+
+    it('lanza InternalServerError para errores inesperados', async () => {
+      preloadSpy.mockResolvedValue(buildUser());
+      repo.save.mockRejectedValue({ code: 'SERVER_ERROR', detail: 'crash' });
+      await expect(service.update('u-1', { fullName: 'X' } as any)).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
+  describe('onModuleInit y createDefaultAdmin', () => {
+    it('crea admin si no existe', async () => {
+      repo.findOne.mockResolvedValue(null);
+      const adminUser = buildUser({ email: 'admin@example.com', fullName: 'System Administrator', roles: ['admin'] });
+      repo.create.mockReturnValue(adminUser);
+      repo.save.mockResolvedValue(adminUser);
+      
+      await service.onModuleInit();
+      
+      expect(repo.findOne).toHaveBeenCalledWith({ where: { email: 'admin@example.com' } });
+      expect(repo.create).toHaveBeenCalled();
+      expect(repo.save).toHaveBeenCalled();
+    });
+
+    it('no crea admin si ya existe', async () => {
+      const existingAdmin = buildUser({ email: 'admin@example.com', roles: ['admin'] });
+      repo.findOne.mockResolvedValue(existingAdmin);
+      
+      await service.onModuleInit();
+      
+      expect(repo.findOne).toHaveBeenCalledWith({ where: { email: 'admin@example.com' } });
+      expect(repo.create).not.toHaveBeenCalled();
+    });
+
+    it('maneja error al crear admin', async () => {
+      repo.findOne.mockRejectedValue(new Error('DB error'));
+      
+      // No debe lanzar error
+      await expect(service.onModuleInit()).resolves.toBeUndefined();
+    });
+  });
 });

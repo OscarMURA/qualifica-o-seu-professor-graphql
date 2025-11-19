@@ -66,6 +66,70 @@ describe('CommentsResolver', () => {
     expect(service.getProfessorRating).toHaveBeenCalledWith('prof-1');
     expect(result).toBe(mockRating);
   });
+
+  it('createComment funciona con usuario válido', async () => {
+    const input: CreateCommentInput = { content: 'Test', rating: 3, professorId: 'prof-1' } as any;
+    const result = await resolver.createComment(input, mockUser);
+    expect(service.create).toHaveBeenCalledWith(input, mockUser);
+    expect(result).toBe(mockComment);
+  });
+
+  it('updateComment con usuario diferente arroja error', async () => {
+    const input: UpdateCommentInput = { content: 'Hacked' } as any;
+    service.update.mockRejectedValue(new Error('Forbidden'));
+    await expect(resolver.updateComment('comm-1', input, mockUser)).rejects.toThrow();
+  });
+
+  it('removeComment delega correctamente', async () => {
+    const result = await resolver.removeComment('comm-1', mockUser);
+    expect(service.remove).toHaveBeenCalledWith('comm-1', mockUser);
+    expect(result).toBe(mockComment);
+  });
+
+  it('findAll sin filtro funciona', async () => {
+    const result = await resolver.findAll();
+    expect(service.findAll).toHaveBeenCalledWith(undefined);
+    expect(result).toBe(mockPaginated);
+  });
+
+  it('findOne con ID válido retorna comentario', async () => {
+    const result = await resolver.findOne('comm-1');
+    expect(service.findOne).toHaveBeenCalledWith('comm-1');
+    expect(result).toBe(mockComment);
+  });
+
+  it('createComment con rating válido crea comentario', async () => {
+    const input: CreateCommentInput = { content: 'Excellent', rating: 5, professorId: 'prof-1' } as any;
+    const result = await resolver.createComment(input, mockUser);
+    expect(service.create).toHaveBeenCalledWith(input, mockUser);
+    expect(result).toBe(mockComment);
+  });
+
+  it('updateComment actualiza contenido', async () => {
+    const input: UpdateCommentInput = { content: 'Modified' } as any;
+    service.update.mockResolvedValue({ ...mockComment, content: 'Modified' });
+    const result = await resolver.updateComment('comm-1', input, mockUser);
+    expect(result.content).toBe('Modified');
+  });
+
+  it('removeComment elimina y retorna comentario', async () => {
+    const result = await resolver.removeComment('comm-1', mockUser);
+    expect(service.remove).toHaveBeenCalledWith('comm-1', mockUser);
+    expect(result).toBe(mockComment);
+  });
+
+  it('getProfessorRating retorna rating del profesor', async () => {
+    const result = await resolver.getProfessorRating('prof-1');
+    expect(result.averageRating).toBe(4.2);
+    expect(result.totalComments).toBe(3);
+  });
+
+  it('findAll con paginación retorna resultados', async () => {
+    const filter: FilterCommentInput = { page: 2, limit: 10 } as any;
+    const result = await resolver.findAll(filter);
+    expect(service.findAll).toHaveBeenCalledWith(filter);
+    expect(result.page).toBe(1);
+  });
 });
 import { CommentsService } from '../../src/comments/comments.service';
 import { ProfessorsService } from '../../src/professors/professors.service';

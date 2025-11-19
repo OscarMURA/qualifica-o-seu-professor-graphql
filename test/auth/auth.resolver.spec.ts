@@ -49,4 +49,22 @@ describe('AuthResolver', () => {
     const result = resolver.me(mockUser as any);
     expect(result).toBe(mockUser);
   });
+
+  it('signup con email duplicado arroja error', async () => {
+    const input: SignupInput = { email: 'dup@example.com', fullName: 'Dup', password: 'pass' };
+    authService.signup.mockRejectedValue(new Error('Email already exists'));
+    await expect(resolver.signup(input)).rejects.toThrow('Email already exists');
+  });
+
+  it('login con credenciales incorrectas arroja error', async () => {
+    const input: LoginInput = { email: 'wrong@example.com', password: 'wrong' };
+    authService.login.mockRejectedValue(new Error('Invalid credentials'));
+    await expect(resolver.login(input)).rejects.toThrow('Invalid credentials');
+  });
+
+  it('me retorna usuario con roles correctos', () => {
+    const adminUser = { ...mockUser, roles: ['admin'] };
+    const result = resolver.me(adminUser as any);
+    expect(result.roles).toContain('admin');
+  });
 });
